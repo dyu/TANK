@@ -27,3 +27,39 @@ static_library("snappy") {
   ]
 }
 
+static_library("client") {
+  sources = [ "client.cpp" ]
+  
+  defines = [ "LEAN_SWITCH" ]
+  
+  include_dirs = [ "Switch" ]
+  
+  deps = [
+    ":snappy",
+  ]
+}
+
+executable("tank") {
+  sources = [ "service.cpp" ]
+  
+  defines = [ "LEAN_SWITCH" ]
+  
+  include_dirs = [ "Switch" ]
+  
+  deps = [
+    ":snappy",
+  ]
+}
+
+executable("tank-cli") {
+  sources = [ "cli.cpp" ]
+  
+  defines = [ "LEAN_SWITCH" ]
+  
+  include_dirs = [ "Switch" ]
+  
+  deps = [
+    ":client"
+  ]
+}
+
