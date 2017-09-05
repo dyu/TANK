@@ -8,21 +8,12 @@ config("tank_config") {
 }
 
 config("snappy_config") {
-  if (is_win) {
-    include_dirs = [ "$snappy_dir", "snappy_win" ]
-  } else {
-    include_dirs = [ "$snappy_dir", "snappy_linux" ]
-  }
+  include_dirs = [ "$snappy_dir" ]
 }
 
 static_library("snappy") {
-  if (is_win) {
-    cflags = [ "/wd4018" ]  # Signed/unsigned mismatch in comparison.
-  }
-  
   # local include
   defines = [ "HAVE_CONFIG_H=1" ]
-  include_dirs = [ "snappy_config" ]
 
   public_configs = [ ":snappy_config" ]
   sources = [
