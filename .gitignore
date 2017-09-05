@@ -1,0 +1,7 @@
+/gn-build
+/gn-out
+/.gn
+/tank
+/tank-cli
+*.o
+*.a
