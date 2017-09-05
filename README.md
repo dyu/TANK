@@ -3,16 +3,17 @@ Tank is [a very high performance distributed log](https://github.com/phaistos-ne
 ## Building
 
 ### Make
-1. `make`
+```sh
+make
+```
 
 ### GN
-1. `git clone --depth 1 --single-branch -b ns https://github.com/dyu/gn-build`
-
-2. `echo 'buildconfig = "//gn-build/config/BUILDCONFIG.gn"' > .gn`
-
-3. `gn gen gn-out --args='gcc_cc="gcc" gcc_cxx="g++" symbol_level=0 is_debug=false is_clang=false is_official_build=true'`
-
-4. `ninja -C gn-out`
+```sh
+git clone --depth 1 --single-branch -b ns https://github.com/dyu/gn-build
+echo 'buildconfig = "//gn-build/config/BUILDCONFIG.gn"' > .gn
+gn gen gn-out --args='gcc_cc="gcc" gcc_cxx="g++" symbol_level=0 is_debug=false is_clang=false is_official_build=true'
+ninja -C gn-out
+```
 
 ## Using the cli
 
