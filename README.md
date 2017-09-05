@@ -22,6 +22,32 @@ Tank is [a very high performance distributed log](https://github.com/phaistos-ne
 
 4. `ninja -C gn-out`
 
+## Using the cli
+
+### Start broker
+```sh
+mkdir target
+./tank -p target -l 127.0.0.1
+```
+
+### Create topic (1 partition)
+```sh
+# single partition
+./tank-cli -b 127.0.0.1:11011 -t hello create_topic 1
+```
+
+### Produce
+```sh
+# select partition 0 and write to it with 5 messages
+../tank-cli -b 127.0.0.1:11011 -t hello -p 0 produce one two three hello world
+```
+
+### Consume
+```sh
+# select partition 0 and read from it beginning at the 1st sequence num
+../tank-cli -b 127.0.0.1:11011 -t hello -p 0 consume 1
+```
+
 #### Some Benchmarks
 ##### Single Producer
 ```bash
