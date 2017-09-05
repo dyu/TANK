@@ -3,5 +3,7 @@
 /.gn
 /tank
 /tank-cli
+target
 *.o
 *.a
+
