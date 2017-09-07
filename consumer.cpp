@@ -14,7 +14,7 @@ static void usage(int argc, char *argv[])
 {
     std::cerr << "Usage:\n"
         << argv[0]
-        << " (ip:)port topic\n" << std::endl;
+        << " (ip:)port topic seq\n" << std::endl;
 }
 
 static uint64_t parse_timestamp(strwlen32_t s)
@@ -58,96 +58,8 @@ static uint64_t parse_timestamp(strwlen32_t s)
     return res == -1 ? 0 : Timings::Seconds::ToMillis(res);
 }
 
-enum class Fields : uint8_t
+/*static void parse_opts()
 {
-    SeqNum = 0,
-    Key,
-    Content,
-    TS,
-    Size
-};
-
-int main(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
-        usage(argc, argv);
-        return 1;
-    }
-    
-    Buffer endpoint, topic;
-    uint16_t partition = 0;
-    int r;
-    TankClient tankClient;
-    const char *const app = argv[0];
-    bool verbose{false}, retry{false};
-    
-    endpoint.append(argv[2]);
-    topic.append(argv[2]);
-    
-    try
-    {
-        tankClient.set_default_leader(endpoint.AsS32());
-    }
-    catch (const std::exception &e)
-    {
-        std::cout << "connect error: " << e.what() << std::endl;
-        return 1;
-    }
-    
-    const TankClient::topic_partition topicPartition(topic.AsS8(), partition);
-    const auto consider_fault = [](const TankClient::fault &f) {
-        switch (f.type)
-        {
-            case TankClient::fault::Type::BoundaryCheck:
-                std::cout << "Boundary Check fault. first available sequence number is " 
-                    << f.ctx.firstAvailSeqNum << ", high watermark is " << f.ctx.highWaterMark << std::endl;
-                break;
-
-            case TankClient::fault::Type::UnknownTopic:
-                std::cout << "Unknown topic '" << f.topic << "' error\n";
-                break;
-
-            case TankClient::fault::Type::UnknownPartition:
-                std::cout << "Unknown partition of '" << f.topic << "' error\n";
-                break;
-
-            case TankClient::fault::Type::Access:
-                std::cout << "Access error\n";
-                break;
-
-            case TankClient::fault::Type::SystemFail:
-                std::cout << "System Error\n";
-                break;
-
-            case TankClient::fault::Type::InvalidReq:
-                std::cout << "Invalid Request\n";
-                break;
-
-            case TankClient::fault::Type::Network:
-                std::cout << "Network error\n";
-                break;
-
-            case TankClient::fault::Type::AlreadyExists:
-                std::cout << "Already Exists\n";
-                break;
-
-            default:
-                break;
-        }
-    };
-    
-    uint64_t next{0};
-    uint8_t displayFields{1u << uint8_t(Fields::Content)};
-    size_t defaultMinFetchSize{128 * 1024 * 1024};
-    uint32_t pendingResp{0};
-    bool statsOnly{false}, asKV{false};
-    IOBuffer buf;
-    range64_t timeRange{0, UINT64_MAX};
-		bool drainAndExit{false};
-		uint64_t endSeqNum{UINT64_MAX};
-    
-    optind = 0;
     while ((r = getopt(argc, argv, "+SF:hBT:KdE:s:")) != -1)
     {
         switch (r)
@@ -278,6 +190,98 @@ Print("-d: drain and exit. As soon as all available messages have been consumed,
     {
         next = from.AsUint64();
     }
+}*/
+
+enum class Fields : uint8_t
+{
+    SeqNum = 0,
+    Key,
+    Content,
+    TS,
+    Size
+};
+
+int main(int argc, char *argv[])
+{
+    if (argc < 4)
+    {
+        usage(argc, argv);
+        return 1;
+    }
+    
+    Buffer endpoint, topic;
+    uint16_t partition = 0;
+    int r;
+    TankClient tankClient;
+    const char *const app = argv[0];
+    bool verbose{false}, retry{false};
+    
+    endpoint.append(argv[1]);
+    topic.append(argv[2]);
+    
+    try
+    {
+        tankClient.set_default_leader(endpoint.AsS32());
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << "connect error: " << e.what() << std::endl;
+        return 1;
+    }
+    
+    const TankClient::topic_partition topicPartition(topic.AsS8(), partition);
+    const auto consider_fault = [](const TankClient::fault &f) {
+        switch (f.type)
+        {
+            case TankClient::fault::Type::BoundaryCheck:
+                std::cout << "Boundary Check fault. first available sequence number is " 
+                    << f.ctx.firstAvailSeqNum << ", high watermark is " << f.ctx.highWaterMark << std::endl;
+                break;
+
+            case TankClient::fault::Type::UnknownTopic:
+                std::cout << "Unknown topic '" << f.topic << "' error\n";
+                break;
+
+            case TankClient::fault::Type::UnknownPartition:
+                std::cout << "Unknown partition of '" << f.topic << "' error\n";
+                break;
+
+            case TankClient::fault::Type::Access:
+                std::cout << "Access error\n";
+                break;
+
+            case TankClient::fault::Type::SystemFail:
+                std::cout << "System Error\n";
+                break;
+
+            case TankClient::fault::Type::InvalidReq:
+                std::cout << "Invalid Request\n";
+                break;
+
+            case TankClient::fault::Type::Network:
+                std::cout << "Network error\n";
+                break;
+
+            case TankClient::fault::Type::AlreadyExists:
+                std::cout << "Already Exists\n";
+                break;
+
+            default:
+                break;
+        }
+    };
+    
+    uint64_t next = std::atoi(argv[3]);
+    uint8_t displayFields{1u << uint8_t(Fields::Content)};
+    size_t defaultMinFetchSize{128 * 1024 * 1024};
+    uint32_t pendingResp{0};
+    bool statsOnly{false}, asKV{false};
+    IOBuffer buf;
+    range64_t timeRange{0, UINT64_MAX};
+		bool drainAndExit{false};
+		uint64_t endSeqNum{UINT64_MAX};
+    
+    optind = 0;
     
 		size_t totalMsgs{0}, sumBytes{0};
 		const auto b = Timings::Microseconds::Tick();
@@ -301,10 +305,12 @@ Print("-d: drain and exit. As soon as all available messages have been consumed,
         
         try
         {
+            // every second
             tankClient.poll(1e3);
         }
-        catch (...)
+        catch (const std::exception &e)
         {
+            std::cout << "poll error: " << e.what() << std::endl;
             continue;
         }
         
