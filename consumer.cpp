@@ -205,7 +205,7 @@ const uint8_t F_VERBOSE = 1;
 const uint8_t F_RETRY = 2;
 const uint8_t F_STATS_ONLY = 4;
 const uint8_t F_AS_KV = 8;
-const uint8_t F_AS_DRAIN_AND_EXIT = 16;
+const uint8_t F_DRAIN_AND_EXIT = 16;
 
 int main(int argc, char *argv[])
 {
@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
     bool retry = 0 != (flags & F_RETRY);
     bool statsOnly = 0 != (flags & F_STATS_ONLY);
     bool asKV = 0 != (flags & F_AS_KV);
-    bool drainAndExit = 0 != (flags & F_AS_DRAIN_AND_EXIT);
+    bool drainAndExit = 0 != (flags & F_DRAIN_AND_EXIT);
     
     endpoint.append(argv[1]);
     topic.append(argv[2]);
