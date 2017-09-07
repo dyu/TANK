@@ -201,6 +201,12 @@ enum class Fields : uint8_t
     Size
 };
 
+const uint8_t F_VERBOSE = 1;
+const uint8_t F_RETRY = 2;
+const uint8_t F_STATS_ONLY = 4;
+const uint8_t F_AS_KV = 8;
+const uint8_t F_AS_DRAIN_AND_EXIT = 16;
+
 int main(int argc, char *argv[])
 {
     if (argc < 4)
@@ -214,7 +220,12 @@ int main(int argc, char *argv[])
     int r;
     TankClient tankClient;
     const char *const app = argv[0];
-    bool verbose{false}, retry{false};
+    int flags = argc > 4 ? std::atoi(argv[4]) : 0;
+    bool verbose = 0 != (flags & F_VERBOSE);
+    bool retry = 0 != (flags & F_RETRY);
+    bool statsOnly = 0 != (flags & F_STATS_ONLY);
+    bool asKV = 0 != (flags & F_AS_KV);
+    bool drainAndExit = 0 != (flags & F_AS_DRAIN_AND_EXIT);
     
     endpoint.append(argv[1]);
     topic.append(argv[2]);
@@ -275,13 +286,11 @@ int main(int argc, char *argv[])
     uint8_t displayFields{1u << uint8_t(Fields::Content)};
     size_t defaultMinFetchSize{128 * 1024 * 1024};
     uint32_t pendingResp{0};
-    bool statsOnly{false}, asKV{false};
     IOBuffer buf;
     range64_t timeRange{0, UINT64_MAX};
-		bool drainAndExit{false};
 		uint64_t endSeqNum{UINT64_MAX};
     
-    optind = 0;
+    //optind = 0;
     
 		size_t totalMsgs{0}, sumBytes{0};
 		const auto b = Timings::Microseconds::Tick();
@@ -292,9 +301,12 @@ int main(int argc, char *argv[])
         if (!pendingResp)
         {
             if (verbose)
-                Print("Requesting from ", next, "\n");
-
-            pendingResp = tankClient.consume({{topicPartition, {next, minFetchSize}}}, drainAndExit ? 0 : 8e3, 0);
+                std:: cout << "Requesting from " << next << std::endl;
+            
+            // block for 5 seconds?
+            pendingResp = tankClient.consume({{topicPartition, {next, minFetchSize}}}, drainAndExit ? 0 : 5000, 0);
+            if (verbose)
+                std::cout << "done consume" << std::endl;
 
             if (!pendingResp)
             {
@@ -306,7 +318,9 @@ int main(int argc, char *argv[])
         try
         {
             // every second
-            tankClient.poll(1e3);
+            tankClient.poll(1000);
+            if (verbose)
+                std::cout << "done poll" << std::endl;
         }
         catch (const std::exception &e)
         {
