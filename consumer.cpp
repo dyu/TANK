@@ -14,7 +14,7 @@ static void usage(int argc, char *argv[])
 {
     std::cerr << "Usage:\n"
         << argv[0]
-        << " (ip:)port topic seq\n" << std::endl;
+        << " (ip:)port topic seq [ flags ]\n" << std::endl;
 }
 
 static uint64_t parse_timestamp(strwlen32_t s)
