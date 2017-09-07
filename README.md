@@ -35,6 +35,9 @@ mkdir target
 ```sh
 # select partition 0 and write to it with 5 messages
 ./tank-cli -b 127.0.0.1:11011 -t hello -p 0 produce one two three hello world
+
+# produce as key/value
+./tank-cli -b 127.0.0.1:11011 -t hello -p 0 produce -K key=value foo=bar
 ```
 
 ### Consume
