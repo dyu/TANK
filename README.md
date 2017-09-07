@@ -11,6 +11,7 @@ make
 ```sh
 git clone --depth 1 --single-branch -b ns https://github.com/dyu/gn-build
 git clone --depth 1 --single-branch -b master https://github.com/dyu/gn-deps
+./gn-deps/fetch.sh
 echo 'buildconfig = "//gn-build/config/BUILDCONFIG.gn"' > .gn
 gn gen gn-out --args='gcc_cc="gcc" gcc_cxx="g++" symbol_level=0 is_debug=false is_clang=false is_official_build=true'
 ninja -C gn-out
