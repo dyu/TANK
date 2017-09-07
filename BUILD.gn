@@ -2,7 +2,7 @@
 # vars
 
 config("tank_config") {
-  include_dirs = [ "include" ]
+  include_dirs = [ "." ]
 }
 
 static_library("client") {
@@ -11,6 +11,8 @@ static_library("client") {
   defines = [ "LEAN_SWITCH" ]
   
   include_dirs = [ "Switch" ]
+  
+  public_configs = [ ":tank_config" ]
   
   deps = [
     "//gn-deps/snappy:snappy",
