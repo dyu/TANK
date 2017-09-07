@@ -2,18 +2,13 @@
 # vars
 
 config("tank_config") {
-  include_dirs = [ "." ]
+  include_dirs = [ ".", "Switch" ]
+  defines = [ "LEAN_SWITCH" ]
 }
 
 static_library("client") {
   sources = [ "client.cpp" ]
-  
-  defines = [ "LEAN_SWITCH" ]
-  
-  include_dirs = [ "Switch" ]
-  
   public_configs = [ ":tank_config" ]
-  
   deps = [
     "//gn-deps/snappy:snappy",
   ]
@@ -21,11 +16,8 @@ static_library("client") {
 
 executable("tank") {
   sources = [ "service.cpp" ]
-  
-  defines = [ "LEAN_SWITCH" ]
-  
   include_dirs = [ "Switch" ]
-  
+  defines = [ "LEAN_SWITCH" ]
   deps = [
     "//gn-deps/snappy:snappy",
   ]
@@ -33,11 +25,13 @@ executable("tank") {
 
 executable("tank-cli") {
   sources = [ "cli.cpp" ]
-  
-  defines = [ "LEAN_SWITCH" ]
-  
-  include_dirs = [ "Switch" ]
-  
+  deps = [
+    ":client"
+  ]
+}
+
+executable("consumer") {
+  sources = [ "consumer.cpp" ]
   deps = [
     ":client"
   ]
