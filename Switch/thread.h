@@ -3,6 +3,5 @@
 
 namespace Switch
 {
-	using mutex = std::mutex;
+using mutex = std::mutex;
 }
-

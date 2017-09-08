@@ -21,15 +21,14 @@
 #define SNAPPY_MAJOR 1
 #define SNAPPY_MINOR 0
 #define SNAPPY_PATCHLEVEL 0
-#define SNAPPY_VERSION \
-    ((SNAPPY_MAJOR << 16) | (SNAPPY_MINOR << 8) | SNAPPY_PATCHLEVEL)
+#define SNAPPY_VERSION ((SNAPPY_MAJOR << 16) | (SNAPPY_MINOR << 8) | SNAPPY_PATCHLEVEL)
 
 #ifdef SWITCH_EXT_SNAPPY_USE_STRING
 #include <string>
 #endif
 
-namespace snappy {
-
+namespace snappy
+{
 #if 1
 typedef int8_t int8;
 typedef uint8_t uint8;
@@ -54,9 +53,9 @@ typedef unsigned long long uint64;
 typedef std::string string;
 #endif
 
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
+#define DISALLOW_COPY_AND_ASSIGN(TypeName)                                                                             \
+    TypeName(const TypeName &);                                                                                        \
+    void operator=(const TypeName &)
 
 }  // namespace snappy
 

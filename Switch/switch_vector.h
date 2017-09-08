@@ -3,55 +3,54 @@
 
 namespace Switch
 {
-        template <class T>
-        class vector
-            : public std::vector<T>
+template <class T>
+class vector : public std::vector<T>
+{
+  public:
+    void RemoveByValue(const T v)
+    {
+        const auto e = this->end();
+        auto it = std::find(this->begin(), e, v);
+
+        if (it != e)
         {
-              public:
-                void RemoveByValue(const T v)
-                {
-                        const auto e = this->end();
-                        auto it = std::find(this->begin(), e, v);
+            const auto n = this->size();
 
-                        if (it != e)
-                        {
-                                const auto n = this->size();
+            this->erase(it);
+            require(this->size() + 1 == n);
+        }
+    }
 
-                                this->erase(it);
-                                require(this->size() + 1 == n);
-                        }
-                }
+    T Pop()
+    {
+        auto last{ this->back() };
 
-                T Pop()
-                {
-                        auto last{this->back()};
+        this->pop_back();
+        return last;
+    }
 
-                        this->pop_back();
-                        return last;
-                }
+    auto values() noexcept
+    {
+        return this->data();
+    }
 
-                auto values() noexcept
-                {
-                        return this->data();
-                }
+    void pop_front()
+    {
+        auto it = this->begin();
 
-                void pop_front()
-                {
-                        auto it = this->begin();
+        this->erase(it);
+    }
 
-                        this->erase(it);
-                }
+    void Append(T *const list, const size_t n)
+    {
+        this->reserve(n);
+        for (size_t i{ 0 }; i != n; ++i)
+            this->push_back(list[i]);
+    }
 
-                void Append(T *const list, const size_t n)
-                {
-                        this->reserve(n);
-                        for (size_t i{0}; i != n; ++i)
-                                this->push_back(list[i]);
-                }
-
-                void PopByIndex(const size_t idx)
-                {
-                        this->erase(this->begin() + idx);
-                }
-        };
+    void PopByIndex(const size_t idx)
+    {
+        this->erase(this->begin() + idx);
+    }
+};
 }
